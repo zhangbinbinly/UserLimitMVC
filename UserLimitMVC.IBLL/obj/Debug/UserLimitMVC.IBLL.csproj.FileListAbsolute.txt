@@ -1,0 +1,9 @@
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.IBLL\obj\Debug\ResolveAssemblyReference.cache
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.IBLL\bin\Debug\UserLimitMVC.IBLL.dll
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.IBLL\bin\Debug\UserLimitMVC.IBLL.pdb
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.IBLL\bin\Debug\UserLimitMVC.Model.dll
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.IBLL\bin\Debug\UserLimitMVC.Model.pdb
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.IBLL\obj\Debug\UserLimitMVC.IBLL.dll
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.IBLL\obj\Debug\UserLimitMVC.IBLL.pdb
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.IBLL\bin\Debug\UserLimitMVC.Common.dll
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.IBLL\bin\Debug\UserLimitMVC.Common.pdb

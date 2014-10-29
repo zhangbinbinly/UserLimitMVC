@@ -1,0 +1,11 @@
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.DAL\obj\Debug\ResolveAssemblyReference.cache
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.DAL\bin\Debug\UserLimitMVC.DAL.dll
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.DAL\bin\Debug\UserLimitMVC.DAL.pdb
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.DAL\bin\Debug\EntityFramework.dll
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.DAL\bin\Debug\UserLimitMVC.IDAL.dll
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.DAL\bin\Debug\UserLimitMVC.Model.dll
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.DAL\bin\Debug\UserLimitMVC.IDAL.pdb
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.DAL\bin\Debug\UserLimitMVC.Model.pdb
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.DAL\bin\Debug\EntityFramework.xml
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.DAL\obj\Debug\UserLimitMVC.DAL.dll
+E:\Projcets\ProjectTest\UserLimitMVC\UserLimitMVC.DAL\obj\Debug\UserLimitMVC.DAL.pdb

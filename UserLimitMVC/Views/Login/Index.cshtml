@@ -1,0 +1,121 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+@*引用Jquery文件的JS脚本*@
+<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+
+    //当用户刷新页面触发的方法
+
+    $(function () {
+
+        //实现用户登录的方法
+
+        LoginUser();
+
+        //单击的时候修改验证码的方法
+
+        ClickRemoveChangeCode();
+
+    });
+
+    //实现用户登录
+
+    function LoginUser() {
+
+        //获取单击用户登录按钮的事件
+
+        $("#btnLogin").click(function () {
+
+            //首先获取到要传递到控制器的参数，并且构造成Json。UName，Pwd，Code
+
+            var postData = {
+
+                UserName: $("#UserName").val(),
+
+                UserPassword: $("#UserPassword").val(),
+
+                Code: $("#Code").val()
+
+            };
+
+            //发送异步请求实现登录
+            //            $.post("/Login/CheckUserInfo", postData, function (data) {
+            //                if (data == "OK") {
+            //                    window.location.href = "/Home/Index";
+            //                } else {
+            //                    alert(data);
+            //                    window.location.href = "/Login/Index";
+            //                }
+            //            });
+            //发送异步请求实现登录 ajax
+            $.ajax({
+                url: '/Login/CheckUserInfo',
+                data: postData,
+                cache: false,
+                async: true,
+                type: 'post',
+                success: function (data) {
+                    if (data == "OK") {
+                        window.location.href = "/Home/Index";
+
+                    } else {
+                        alert(data);
+                        window.location.href = "/Login/Index";
+                    }
+                }
+            });
+
+        });
+
+    }
+
+    //单击重新改变验证码
+
+    function ClickRemoveChangeCode() {
+
+        //首先我们获取到验证码的路径
+
+        var code = $("#imgCode").attr("src");
+
+        //然后重新给验证码的路径赋值
+
+        $("#imgCode").attr("src", code + "1");
+
+    }
+
+</script>
+<h2>
+    登陆页面</h2>
+<ul>
+    <li class="user_main_text">用户名： </li>
+    <li class="user_main_input">
+        <input type="text" class="TxtPasswordCssClass" id="UserName" name="UserName" value="zbb">
+    </li>
+</ul>
+<ul>
+    <li class="user_main_text">密码： </li>
+    <li class="user_main_input">
+        <input type="text" class="TxtPasswordCssClass" id="UserPassword" name="UserPassword" value="1">
+    </li>
+</ul>
+<ul>
+    <li class="user_main_text">验证码： </li>
+    <li class="user_main_input">
+        <input type="text" class="TxtPasswordCssClass" id="Code" name="Code">
+    </li>
+</ul>
+<ul>
+    <li class="user_main_text">验证码： </li>
+    <li class="user_main_input">
+        <img src="/Login/CheckCode?ID=1" id="imgCode" alt="单击可刷新" onclick="ClickRemoveChangeCode()" />
+        <a href="javascript:void(0)" onclick="ClickRemoveChangeCode();return false;">看不清</a>
+    </li>
+</ul>
+<ul>
+    <li class="user_main_text">
+        <button id="btnLogin" name="btnLogin">
+            登陆
+        </button>
+    </li>
+</ul>

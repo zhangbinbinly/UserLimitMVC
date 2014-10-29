@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EDA0080D-BC4D-4732-BA04-59A8EEEA50F7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>UserLimitMVC.BLL</RootNamespace>
+    <AssemblyName>UserLimitMVC.BLL</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BaseService.cs" />
+    <Compile Include="RoleService.cs" />
+    <Compile Include="BaseUserService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UserLimitMVC.Common\UserLimitMVC.Common.csproj">
+      <Project>{53E53EB7-9207-42C7-8205-BB0378A5D86C}</Project>
+      <Name>UserLimitMVC.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UserLimitMVC.DAL\UserLimitMVC.DAL.csproj">
+      <Project>{1D8334C3-DDCE-4F3C-B3A3-99A9C301C933}</Project>
+      <Name>UserLimitMVC.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UserLimitMVC.IBLL\UserLimitMVC.IBLL.csproj">
+      <Project>{F9C2330C-5496-49CA-A3A6-EC0B51A2CC3F}</Project>
+      <Name>UserLimitMVC.IBLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UserLimitMVC.IDAL\UserLimitMVC.IDAL.csproj">
+      <Project>{AE619A0C-5CD5-4E1B-9AEC-0BD120D69A0E}</Project>
+      <Name>UserLimitMVC.IDAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UserLimitMVC.Model\UserLimitMVC.Model.csproj">
+      <Project>{8255B29A-CD12-44E4-A3EF-2B9A61C5110B}</Project>
+      <Name>UserLimitMVC.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
