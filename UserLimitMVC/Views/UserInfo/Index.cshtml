@@ -20,7 +20,6 @@
         $(function () {
 
             //当页面首次刷新的时候执行的事件
-
             initTable();
 
             //检查用户名的输入必须正确
@@ -67,8 +66,8 @@
 
                     { title: '主键', field: 'ID', width: 80, sortable: true },
                     { title: '登录名', field: 'UserName', width: 100, sortable: true },  //登录名
-                    { title: '姓名', field: 'RealName', width: 100, sortable: true },  //用户名
-                    { title: 'E-Email', field: 'Email', width: 150, sortable: true },
+                    {title: '姓名', field: 'RealName', width: 100, sortable: true },  //用户名
+                    {title: 'E-Email', field: 'Email', width: 150, sortable: true },
                     { title: '性别', field: 'Gender', width: 50, sortable: true },
                     { title: '手机', field: 'Mobile', width: 120, sortable: true },
                 //{ title: 'QQ号码', field: 'QICQ', width: 100, sortable: true },
@@ -270,6 +269,31 @@
             }
         }
 
+        //修改用户的信息
+        function UpdateUserInfo(browse) {
+            //首先取出来用户选择的数据的ID
+            var rows = $("#test").datagrid("getSelections");
+            //首先取出来值判断用户只能选择一个
+            if (rows.length != 1) {
+                $.messager.alert("友情提示", "每次只能修改/浏览一条，你已经选择了<font color='red'  size='6'>" + rows.length + "</font>条", "error");
+                return;
+            }
+            if (browse == null) {
+                //处理修改的信息，弹出修改的对话框,然后显示选择的用户的详细信息
+                $("#DivUpdateUser").dialog('open').dialog('setTitle', '用户修改信息');
+                //绑定修改显示详细信息的方法
+                BindShowUpdateUserInfo();
+            }
+            else {
+                //处理浏览的信息，弹出浏览狂，然后显示浏览信息的相信信息
+                $("#DivBrowerUser").dialog('open').dialog('setTitle', '用户浏览信息');
+                //绑定用户的浏览信息
+                BindBrowerUserInfo();
+            }
+            //绑定修改事件
+            //BindUpdateUserInfo();
+        }
+
         //检测注册用户登录名和修改用户名不能重复
         function CheckUserName() {
             $("#UserName").blur(function () {
@@ -306,6 +330,30 @@
                     },
                     message: '字段不匹配'
                 }
+            });
+        }
+
+        //绑定修改显示详细信息的方法
+        function BindShowUpdateUserInfo() {
+            //首先用户发送一个异步请求去后台实现方法
+            var ID = $("#test").datagrid("getSelections")[0].ID;  //获取到了用用户选择的ID
+            $.get("/UserInfo/GetUserInfos", { ID: ID }, function (userInfo) {
+                $("#ID").val(userInfo.ID);
+                $("#UserName1").val(userInfo.UserName);
+                $("#RealName1").val(userInfo.RealName);
+                $("#Email1").val(userInfo.Email);
+                $("#SecurityLevel1").combobox('setValue', userInfo.SecurityLevel);
+                $('input[name="Gender"]:checked').val(userInfo.Gender);
+                $("#Birthday1").datebox('setValue', userInfo.Birthday);
+                $("#Mobile1").val(userInfo.Mobile);
+                $("#Telephone1").val(userInfo.Telephone);
+                $("#QICQ1").val(userInfo.QICQ);
+                $("#SortCode1").val(userInfo.SortCode);
+                $("#IsStaff").combobox('setValue', userInfo.IsStaff);
+                $("#IsVisible").combobox('setValue', userInfo.IsVisible);
+                $("#Enabled").combobox('setValue', userInfo.Enabled);
+                $("#AuditStatus").combobox('setValue', userInfo.AuditStatus);
+                $("#Description1").val(userInfo.Description);
             });
         }
 
@@ -457,6 +505,178 @@
                         <a href="javascript:void(0)" class="easyui-linkbutton" id="btnRegist" iconcls="icon-ok">
                             确定</a> <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel"
                                 onclick="javascript:$('#DivAddUser').dialog('close')">关闭</a>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+        </form>
+    </div>
+    <!------------------------弹出用户修改信息的弹出层---------------------------------->
+    <div id="DivUpdateUser" class="easyui-dialog" style="width: 580px; height: 400px;
+        padding: 10px 20px" closed="true" resizable="true" modal="true" buttons="#dlg-buttons">
+        <form id="ffUpdate" method="post" novalidate="novalidate">
+        <fieldset>
+            <legend>用户修改信息</legend>
+            <table id="tblUpdate">
+                <tr>
+                    <td>
+                        <label for="UserName1">
+                            登录名：</label>
+                    </td>
+                    <td>
+                        <input type="hidden" id="ID" name="ID" />
+                        <input class="easyui-validatebox" type="text" id="UserName1" name="UserName" data-options="required:true,validType:'length[1,32]'" />
+                    </td>
+                    <td>
+                        <label for="RealName1">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;真实姓名：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="RealName1" name="RealName" data-options="required:true,validType:'length[1,200]'" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="Email1">
+                            EMail：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="Email1" name="Email" data-options="validType:'email'" />
+                    </td>
+                    <td>
+                        <label for="SecurityLevel1">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;安全级别：</label>
+                    </td>
+                    <td>
+                        <select id="SecurityLevel1" class="easyui-combobox" style="width: 154px;" name="SecurityLevel"
+                            data-options="required:true">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="Gender">
+                            性别：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-validatebox" type="radio" name="Gender" id="Boy1" value="男"
+                            checked="checked" />男&nbsp;&nbsp;
+                        <input class="easyui-validatebox" type="radio" name="Gender" id="Girl1" value="女" />女&nbsp;&nbsp;
+                        <input class="easyui-validatebox" type="radio" name="Gender" id="No1" value="未知" />未知
+                    </td>
+                    <td>
+                        <label for="Birthday1">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;出生日期：</label>
+                    </td>
+                    <td>
+                        <input id="Birthday1" style="width: 154px;" class="easyui-datebox" required="required"
+                            name="Birthday" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="Mobile1">
+                            手机号码：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-numberbox" type="text" id="Mobile1" name="Mobile" />
+                    </td>
+                    <td>
+                        <label for="Telephone1">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;电话号码：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-numberbox" type="text" id="Telephone1" name="Telephone" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="QICQ1">
+                            QQ号码：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-numberbox" type="text" id="QICQ1" name="QICQ" />
+                    </td>
+                    <td>
+                        <label for="SortCode1">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;排序码：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="SortCode1" name="SortCode" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="IsStaff">
+                            是否职员：</label>
+                    </td>
+                    <td>
+                        <select class="easyui-combobox" id="IsStaff" style="width: 154px;" name="IsStaff"
+                            data-options="required:true">
+                            <option value="1">是职员</option>
+                            <option value="0">不是职员</option>
+                        </select>
+                    </td>
+                    <td>
+                        <label for="IsVisible">
+                            是否显示：</label>
+                    </td>
+                    <td>
+                        <select id="IsVisible" class="easyui-combobox" style="width: 154px;" name="IsVisible"
+                            data-options="required:true">
+                            <option value="1">显示</option>
+                            <option value="0">不显示</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="Enabled">
+                            是否有效：</label>
+                    </td>
+                    <td>
+                        <select class="easyui-combobox" id="Enabled" style="width: 154px;" name="Enabled"
+                            data-options="required:true">
+                            <option value="1">有效用户</option>
+                            <option value="0">无效用户</option>
+                        </select>
+                    </td>
+                    <td>
+                        <label for="AuditStatus">
+                            审核状态：</label>
+                    </td>
+                    <td>
+                        <select id="AuditStatus" class="easyui-combobox" style="width: 154px;" name="AuditStatus"
+                            data-options="required:true">
+                            <option value="已审核">已审核</option>
+                            <option value="未审核">未审核</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="Description1">
+                            备注信息：</label>
+                    </td>
+                    <td colspan="3">
+                        <textarea style="height: 50px; width: 406px;" id="Description1" name="Description"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align: center; padding-top: 10px">
+                        <a href="javascript:void(0)" class="easyui-linkbutton" id="btnUpdate" iconcls="icon-ok">
+                            确定</a> <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel"
+                                onclick="javascript:$('#DivUpdateUser').dialog('close')">关闭</a>
                     </td>
                 </tr>
             </table>
