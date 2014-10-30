@@ -51,9 +51,9 @@ namespace UserLimitMVC.BLL
         public bool UpdateEntity(T entity)
         {
 
-            CurrentRepository.UpdateEntity(entity);
+            return CurrentRepository.UpdateEntity(entity);
 
-            return _DbSession.SaveChanges() > 0;
+            //return _DbSession.SaveChanges() > 0;
 
         }
         //实现对数据库的删除功能

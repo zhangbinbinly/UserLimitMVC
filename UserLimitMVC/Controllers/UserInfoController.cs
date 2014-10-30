@@ -7,6 +7,7 @@ using UserLimitMVC.BLL;
 using UserLimitMVC.Model;
 using LYZJ.UserLimitMVC.Common.Enum;
 using UserLimitMVC.Common;
+using Newtonsoft.Json;
 
 namespace UserLimitMVC.Controllers
 {
@@ -175,6 +176,129 @@ namespace UserLimitMVC.Controllers
 
             return Content("OK");
 
+        }
+
+        /// <summary>
+        /// 根据用户ID读取当前用户的信息
+        /// </summary>
+        /// <param name="ID">用户ID</param>
+        /// <returns>返回执行成功的信息</returns>
+        public JsonResult GetUserInfos(int ID)
+        {
+            //根据ID的到当前选中的用户的信息
+            //var userInfos = _userInfoService.LoadEntities(c => c.ID == ID).FirstOrDefault();
+            #region Linq
+            //var userInfos = (from u in _userInfoService.LoadEntities(c => c.ID == ID)
+            //                 select new
+            //                 {
+            //                     u.ID,
+            //                     u.AuditStatus,
+            //                     u.Birthday,
+            //                     u.CreateBy,
+            //                     u.CreateOn,
+            //                     u.CreateUserID,
+            //                     u.DeletionStateCode,
+            //                     u.Description,
+            //                     u.Email,
+            //                     u.Enabled,
+            //                     u.Gender,
+            //                     u.HomeAddress,
+            //                     u.IsStaff,
+            //                     u.IsVisible,
+            //                     u.Mobile,
+            //                     u.ModifiedBy,
+            //                     u.ModifiedUserID,
+            //                     u.ModifirdOn,
+            //                     u.QICQ,
+            //                     u.QuickQuery,
+            //                     u.RealName,
+            //                     u.SecurityLevel,
+            //                     u.SortCode,
+            //                     u.Telephone,
+            //                     u.Title,
+            //                     u.UserFrom,
+            //                     u.UserName,
+            //                     u.UserPassword
+            //                 }).FirstOrDefault(); 
+            #endregion
+
+            #region Lamda
+            var userInfos = _userInfoService.LoadEntities(u => u.ID == ID).Select(u => new
+            {
+                u.ID,
+                u.AuditStatus,
+                u.Birthday,
+                u.CreateBy,
+                u.CreateOn,
+                u.CreateUserID,
+                u.DeletionStateCode,
+                u.Description,
+                u.Email,
+                u.Enabled,
+                u.Gender,
+                u.HomeAddress,
+                u.IsStaff,
+                u.IsVisible,
+                u.Mobile,
+                u.ModifiedBy,
+                u.ModifiedUserID,
+                u.ModifirdOn,
+                u.QICQ,
+                u.QuickQuery,
+                u.RealName,
+                u.SecurityLevel,
+                u.SortCode,
+                u.Telephone,
+                u.Title,
+                u.UserFrom,
+                u.UserName,
+                u.UserPassword
+            }).FirstOrDefault(); 
+            #endregion
+
+            return Json(userInfos, JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
+        /// 根据用户ID信息修改用户的信息
+        /// </summary>
+        /// <param name="userInfo">用户的实体类</param>
+        /// <returns>返回是否修改成功的标志</returns>
+        public ActionResult UpdateUserInfo(BaseUser userInfo)
+        {
+            //首先根据传递过来的参数查询出要修改的信息
+            var editUserInfo = _userInfoService.LoadEntities(c => c.ID == userInfo.ID).FirstOrDefault();
+            if (editUserInfo == null)
+            {
+                return Content("错误信息，请您检查");
+            }
+            //对用户的信息进行修改
+            editUserInfo.UserName = userInfo.UserName;
+            editUserInfo.RealName = userInfo.RealName;
+            editUserInfo.QuickQuery = userInfo.UserName;
+            editUserInfo.Email = userInfo.Email;
+            editUserInfo.SecurityLevel = userInfo.SecurityLevel;
+            editUserInfo.Gender = userInfo.Gender;
+            editUserInfo.Birthday = userInfo.Birthday;
+            editUserInfo.Mobile = userInfo.Mobile;
+            editUserInfo.Telephone = userInfo.Telephone;
+            editUserInfo.QICQ = userInfo.QICQ;
+            editUserInfo.SortCode = userInfo.SortCode;
+            editUserInfo.IsStaff = userInfo.IsStaff;
+            editUserInfo.IsVisible = userInfo.IsVisible;
+            editUserInfo.Enabled = userInfo.Enabled;
+            editUserInfo.AuditStatus = userInfo.AuditStatus;
+            editUserInfo.Description = userInfo.Description;
+            editUserInfo.ModifirdOn = DateTime.Parse(DateTime.Now.ToString());
+            BaseUser user = Session["UserInfo"] as BaseUser;
+            editUserInfo.ModifiedUserID = user.Code;  //获取修改信息的ID
+            editUserInfo.ModifiedBy = user.UserName;//获取修改此用户的用户名
+
+            if (_userInfoService.UpdateEntity(editUserInfo))
+            {
+                return Content("OK");
+            }
+            return Content("Error");
         }
     }
 }

@@ -30,6 +30,9 @@
 
             //绑定注册按钮的事件
             bindRegisteButtonClickEvent();
+
+            //修改用户信息的代码
+            BindUpdateUserInfo();
         });
 
         //实现对DataGird控件的绑定操作
@@ -333,6 +336,30 @@
             });
         }
 
+        //修改用户的相信信息
+        function BindUpdateUserInfo() {
+            $("#btnUpdate").click(function () {
+                //首先也是对用户进行检测
+                var validate = $("#ffUpdate").form("validate");
+                if (validate == false) {
+                    return false;
+                }
+                //构造参数发送给后台
+                var posData = $("#ffUpdate").serializeArray();
+                $.get("/UserInfo/UpdateUserInfo", posData, function (date) {
+                    if (date == "OK") {
+                        //修改成功，关闭弹出层，刷新DataGird
+                        alert("修改成功");
+                        $("#DivUpdateUser").dialog('close');
+                        $("#test").datagrid("reload");
+                    }
+                    else {
+                        $.messager.alert("友情提示", "修改失败，请您检查");
+                    }
+                })
+            });
+        }
+
         //绑定修改显示详细信息的方法
         function BindShowUpdateUserInfo() {
             //首先用户发送一个异步请求去后台实现方法
@@ -343,11 +370,15 @@
                 $("#RealName1").val(userInfo.RealName);
                 $("#Email1").val(userInfo.Email);
                 $("#SecurityLevel1").combobox('setValue', userInfo.SecurityLevel);
-                $('input[name="Gender"]:checked').val(userInfo.Gender);
+                //$('input[name="Gender"]:checked').val(userInfo.Gender);
+                $('input[name="Gender"][value="' + userInfo.Gender + '"]').prop("checked", true);
                 $("#Birthday1").datebox('setValue', userInfo.Birthday);
-                $("#Mobile1").val(userInfo.Mobile);
-                $("#Telephone1").val(userInfo.Telephone);
-                $("#QICQ1").val(userInfo.QICQ);
+                //$("#Mobile1").val(userInfo.Mobile);
+                $('#Mobile1').numberbox('setValue', userInfo.Mobile);
+                //$("#Telephone1").val(userInfo.Telephone);
+                $("#Telephone1").numberbox('setValue',userInfo.Telephone);
+                //$("#QICQ1").val(userInfo.QICQ);
+                $("#QICQ1").numberbox('setValue',userInfo.QICQ);
                 $("#SortCode1").val(userInfo.SortCode);
                 $("#IsStaff").combobox('setValue', userInfo.IsStaff);
                 $("#IsVisible").combobox('setValue', userInfo.IsVisible);
@@ -357,6 +388,53 @@
             });
         }
 
+        //绑定浏览详细信息的方法
+        function BindBrowerUserInfo() {
+            var ID = $("#test").datagrid('getSelections')[0].ID;
+            //发送请求
+            $.get("/UserInfo/GetUserInfos", { ID: ID }, function (userInfo) {
+                $("#ID2").val(userInfo.ID);
+                $("#UserName2").val(userInfo.UserName);
+                $("#RealName2").val(userInfo.RealName);
+                $("#Email2").val(userInfo.Email);
+                $("#SecurityLevel2").combobox('setValue', userInfo.SecurityLevel);
+                $('input[name="Gender"][value="' + userInfo.Gender + '"]').prop("checked", true);
+                //$('input[name="Gender"]:checked').val(userInfo.Gender);
+                $("#Birthday2").datebox('setValue', userInfo.Birthday);
+                //$("#Mobile2").val(userInfo.Mobile);
+                $("#Mobile2").numberbox('setValue', userInfo.Mobile);
+                //$("#Telephone2").val(userInfo.Telephone);
+                $("#Telephone2").numberbox('setValue', userInfo.Telephone);
+                //$("#QICQ2").val(userInfo.QICQ);
+                $("#QICQ2").numberbox('setValue', userInfo.QICQ);
+                $("#SortCode2").val(userInfo.SortCode);
+                $("#IsStaff2").combobox('setValue', userInfo.IsStaff);
+                $("#IsVisible2").combobox('setValue', userInfo.IsVisible);
+                $("#Enabled2").combobox('setValue', userInfo.Enabled);
+                $("#AuditStatus2").combobox('setValue', userInfo.AuditStatus);
+                $("#Description2").val(userInfo.Description);
+                $("#CreateBy2").val(userInfo.CreateBy);
+                $("#ModifiedBy2").val(userInfo.ModifiedBy);
+                //$("#CreateOn2").datebox('setValue', (eval(userInfo.CreateOn.replace(/\/Date\((\d+)\)\//gi, "new Date($1)")).pattern("yyyy-M-d h:m:s")));
+                //$("#ModifirdOn2").datebox('setValue', (eval(userInfo.ModifirdOn.replace(/\/Date\((\d+)\)\//gi, "new Date($1)")).pattern("yyyy-M-d h:m:s")));
+                $("#CreateOn2").datetimebox('setValue', jsonDateFormat(userInfo.CreateOn)); //alert(jsonDateFormat(userInfo.CreateOn));
+                $("#ModifirdOn2").datetimebox('setValue', jsonDateFormat(userInfo.ModifirdOn));
+            })
+        }
+        function jsonDateFormat(jsonDate) {//json日期格式转换为正常格式
+            try {
+                var date = new Date(parseInt(jsonDate.replace("/Date(", "").replace(")/", ""), 10));
+                var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+                var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                var hours = date.getHours();
+                var minutes = date.getMinutes();
+                var seconds = date.getSeconds();
+                var milliseconds = date.getMilliseconds();
+                return date.getFullYear() + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+            } catch (ex) {
+                return "";
+            }
+        }
     </script>
 </head>
 <body>
@@ -366,7 +444,7 @@
         </table>
     </div>
     <!--------------------------添加用户信息的弹出层---------------------------->
-    <div id="DivAddUser" class="easyui-dialog" style="width: 580px; height: 435px; padding: 10px 20px"
+    <div id="DivAddUser" class="easyui-dialog" style="width: 600px; height: 435px; padding: 10px 20px"
         closed="true" resizable="true" modal="true" buttons="#dlg-buttons">
         <form id="ff" method="post" novalidate="novalidate">
         <fieldset>
@@ -512,7 +590,7 @@
         </form>
     </div>
     <!------------------------弹出用户修改信息的弹出层---------------------------------->
-    <div id="DivUpdateUser" class="easyui-dialog" style="width: 580px; height: 400px;
+    <div id="DivUpdateUser" class="easyui-dialog" style="width: 600px; height: 400px;
         padding: 10px 20px" closed="true" resizable="true" modal="true" buttons="#dlg-buttons">
         <form id="ffUpdate" method="post" novalidate="novalidate">
         <fieldset>
@@ -677,6 +755,228 @@
                         <a href="javascript:void(0)" class="easyui-linkbutton" id="btnUpdate" iconcls="icon-ok">
                             确定</a> <a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel"
                                 onclick="javascript:$('#DivUpdateUser').dialog('close')">关闭</a>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+        </form>
+    </div>
+    <!------------------------弹出用户浏览信息的弹出层---------------------------------->
+    <div id="DivBrowerUser" class="easyui-dialog" style="width: 620px; height: 430px;
+        padding: 10px 20px" closed="true" resizable="true" modal="true" buttons="#dlg-buttons">
+        <form id="ffBrower" method="post" novalidate="novalidate">
+        <fieldset>
+            <legend>用户浏览信息</legend>
+            <table id="tblBrower">
+                <tr>
+                    <td>
+                        <label for="ID2">
+                            用户ID：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="ID2" name="ID" disabled="disabled" />
+                    </td>
+                    <td>
+                        <label for="UserName1">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;登录名：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="UserName2" name="UserName" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="RealName1">
+                            真实姓名：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="RealName2" name="RealName" disabled="disabled" />
+                    </td>
+                    <td>
+                        <label for="Email1">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EMail：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="Email2" name="Email" disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="SecurityLevel1">
+                            安全级别：</label>
+                    </td>
+                    <td>
+                        <select id="SecurityLevel2" class="easyui-combobox" style="width: 154px;" disabled="disabled"
+                            name="SecurityLevel">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </td>
+                    <td>
+                        <label for="Gender">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;性别：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-validatebox" type="radio" name="Gender" id="Boy2" value="男"
+                            checked="checked" />男&nbsp;&nbsp;
+                        <input class="easyui-validatebox" type="radio" name="Gender" id="Girl2" value="女" />女&nbsp;&nbsp;
+                        <input class="easyui-validatebox" type="radio" name="Gender" id="No2" value="未知" />未知
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="Birthday1">
+                            出生日期：</label>
+                    </td>
+                    <td>
+                        <input id="Birthday2" style="width: 154px;" disabled="disabled" class="easyui-datebox"
+                            name="Birthday" />
+                    </td>
+                    <td>
+                        <label for="Mobile1">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;手机号码：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-numberbox" type="text" disabled="disabled" id="Mobile2" name="Mobile" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="Telephone1">
+                            电话号码：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-numberbox" type="text" id="Telephone2" disabled="disabled" name="Telephone" />
+                    </td>
+                    <td>
+                        <label for="QICQ1">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QQ号码：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-numberbox" type="text" id="QICQ2" aria-disabled="true" name="QICQ"
+                            disabled="disabled" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="SortCode1">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;排序码：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="SortCode2" disabled="disabled"
+                            name="SortCode" />
+                    </td>
+                    <td>
+                        <label for="IsStaff">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;是否职员：</label>
+                    </td>
+                    <td>
+                        <select class="easyui-combobox" id="IsStaff2" style="width: 154px;" disabled="disabled"
+                            name="IsStaff">
+                            <option value="1">是职员</option>
+                            <option value="0">不是职员</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="IsVisible">
+                            是否显示：</label>
+                    </td>
+                    <td>
+                        <select id="IsVisible2" class="easyui-combobox" style="width: 154px;" disabled="disabled"
+                            name="IsVisible">
+                            <option value="1">显示</option>
+                            <option value="0">不显示</option>
+                        </select>
+                    </td>
+                    <td>
+                        <label for="Enabled">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;是否有效：</label>
+                    </td>
+                    <td>
+                        <select class="easyui-combobox" id="Enabled2" style="width: 154px;" name="Enabled"
+                            disabled="disabled">
+                            <option value="1">有效用户</option>
+                            <option value="0">无效用户</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="AuditStatus">
+                            审核状态：</label>
+                    </td>
+                    <td>
+                        <select id="AuditStatus2" class="easyui-combobox" style="width: 154px;" name="AuditStatus"
+                            disabled="disabled">
+                            <option value="已审核">已审核</option>
+                            <option value="未审核">未审核</option>
+                        </select>
+                    </td>
+                    <td>
+                        <label for="DeletionStateCode2">
+                            删除状态：</label>
+                    </td>
+                    <td>
+                        <select id="DeletionStateCode2" class="easyui-combobox" style="width: 154px;" disabled="disabled"
+                            name="DeletionStateCode">
+                            <option value="0">正常</option>
+                            <option value="1">伪删除</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="CreateBy2">
+                            创建人：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="CreateBy2" name="CreateBy" disabled="disabled" />
+                    </td>
+                    <td>
+                        <label for="CreateOn2">
+                            创建日期：</label>
+                    </td>
+                    <td>
+                        <input id="CreateOn2" style="width: 154px;" disabled="disabled" class="easyui-datetimebox"
+                            name="CreateOn" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="ModifiedBy2">
+                            最后修改人：</label>
+                    </td>
+                    <td>
+                        <input class="easyui-validatebox" type="text" id="ModifiedBy2" name="ModifiedBy"
+                            disabled="disabled" />
+                    </td>
+                    <td>
+                        <label for="ModifirdOn2">
+                            最后修改日期：</label>
+                    </td>
+                    <td>
+                        <input id="ModifirdOn2" style="width: 154px;" disabled="disabled" class="easyui-datetimebox"
+                            name="ModifirdOn" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="Description">
+                            备注信息：</label>
+                    </td>
+                    <td colspan="3">
+                        <textarea style="height: 50px; width: 406px;" id="Description2" disabled="disabled"
+                            name="Description"></textarea>
                     </td>
                 </tr>
             </table>
