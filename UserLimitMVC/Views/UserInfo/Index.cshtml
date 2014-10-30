@@ -33,11 +33,14 @@
 
             //修改用户信息的代码
             BindUpdateUserInfo();
+
+            //绑定用户搜索按钮的点击事件
+            BindSerarchLickEvent();
         });
 
         //实现对DataGird控件的绑定操作
 
-        function initTable() {
+        function initTable(queryData) {
 
             $('#test').datagrid({   //定位到Table标签，Table标签的ID是test
 
@@ -61,7 +64,7 @@
                 sortOrder: 'asc',
                 remoteSort: false,
                 idField: 'ID',
-                //queryParams: queryData,  //异步查询的参数
+                queryParams: queryData,  //异步查询的参数
 
                 frozenColumns: [[
 
@@ -73,9 +76,9 @@
                     {title: 'E-Email', field: 'Email', width: 150, sortable: true },
                     { title: '性别', field: 'Gender', width: 50, sortable: true },
                     { title: '手机', field: 'Mobile', width: 120, sortable: true },
-                //{ title: 'QQ号码', field: 'QICQ', width: 100, sortable: true },
-                // { title: '创建人', field: 'CreateBy', width: 90, sortable: true },
-                // { title: '最后修改人', field: 'ModifiedBy', width: 90, sortable: true }
+                    { title: 'QQ号码', field: 'QICQ', width: 100, sortable: true },
+                    { title: '创建人', field: 'CreateBy', width: 90, sortable: true },
+                    { title: '最后修改人', field: 'ModifiedBy', width: 90, sortable: true }
                     {title: '删除状态', field: 'DeletionState', width: 120, sortable: true }
                 ]],
 
@@ -376,9 +379,9 @@
                 //$("#Mobile1").val(userInfo.Mobile);
                 $('#Mobile1').numberbox('setValue', userInfo.Mobile);
                 //$("#Telephone1").val(userInfo.Telephone);
-                $("#Telephone1").numberbox('setValue',userInfo.Telephone);
+                $("#Telephone1").numberbox('setValue', userInfo.Telephone);
                 //$("#QICQ1").val(userInfo.QICQ);
-                $("#QICQ1").numberbox('setValue',userInfo.QICQ);
+                $("#QICQ1").numberbox('setValue', userInfo.QICQ);
                 $("#SortCode1").val(userInfo.SortCode);
                 $("#IsStaff").combobox('setValue', userInfo.IsStaff);
                 $("#IsVisible").combobox('setValue', userInfo.IsVisible);
@@ -421,6 +424,25 @@
                 $("#ModifirdOn2").datetimebox('setValue', jsonDateFormat(userInfo.ModifirdOn));
             })
         }
+
+        //绑定搜索按钮的的点击事件
+        function BindSerarchLickEvent() {
+            //按条件进行查询数据，首先我们得到数据的值
+            $("#btnSerach").click(function () {
+                //得到用户输入的参数
+                var queryData = {
+                    RealName: $("#txtRealName").val(),
+                    Telephone: $("#txtTelephone").val(),
+                    EMail: $("#txtMail").val(),
+                    Enabled: $("#txtEnabled").combobox('getValue'),
+                    AuditStatus: $("#txtAuditStatus").combobox('getValue')
+                }
+                //将值传递给
+                initTable(queryData);
+                return false;
+            });
+        }
+
         function jsonDateFormat(jsonDate) {//json日期格式转换为正常格式
             try {
                 var date = new Date(parseInt(jsonDate.replace("/Date(", "").replace(")/", ""), 10));
@@ -439,6 +461,68 @@
 </head>
 <body>
     <div>
+        <!-------------------------------搜索框----------------------------------->
+        <fieldset style="font-size: 12px; width:840px;">
+            <legend>用户详细信息模糊搜索</legend>
+            <div>
+                <table>
+                    <tr>
+                        <td>
+                            <label for="txtRealName">
+                                姓名：</label>
+                        </td>
+                        <td>
+                            <input type="text" id="txtRealName" name="txtRealName" style="width: 80px" />&nbsp;&nbsp;&nbsp;
+                        </td>
+                        <td>
+                            <label for="txtTelephone">
+                                电话：</label>
+                        </td>
+                        <td>
+                            <input type="text" id="txtTelephone" name="txtTelephone" style="width: 100px" />&nbsp;&nbsp;&nbsp;
+                        </td>
+                        <td>
+                            <label for="txtMail">
+                                邮箱：</label>
+                        </td>
+                        <td>
+                            <input type="text" id="txtMail" name="txtMail" style="width: 120px" />&nbsp;&nbsp;&nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="txtEnabled">
+                                是否职员：</label>
+                        </td>
+                        <td>
+                            <select class="easyui-combobox" id="txtEnabled" style="width: 90px;" name="txtEnabled"
+                                data-options="panelHeight:'auto'">
+                                <option value="-1">请选择</option>
+                                <option value="1">是职员</option>
+                                <option value="0">不是职员</option>
+                            </select>&nbsp;&nbsp;&nbsp;
+                        </td>
+                        <td>
+                            <label for="txtAuditStatus">
+                                审核状态：</label>
+                        </td>
+                        <td>
+                            <select id="txtAuditStatus" class="easyui-combobox" style="width: 90px;" name="txtAuditStatus"
+                                data-options="panelHeight:'auto'">
+                                <option value="-1">请选择</option>
+                                <option value="已审核">已审核</option>
+                                <option value="未审核">未审核</option>
+                            </select>&nbsp;&nbsp;&nbsp;
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            <a href="#" class="easyui-linkbutton" iconcls="icon-search" id="btnSerach">模糊搜索</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </fieldset>
         <!-----------------------EasyUI的DataGird控件的放置----------------------->
         <table id="test" style="width: 840px" title="用户操作" iconcls="icon-edit">
         </table>

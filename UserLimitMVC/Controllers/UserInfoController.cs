@@ -8,6 +8,7 @@ using UserLimitMVC.Model;
 using LYZJ.UserLimitMVC.Common.Enum;
 using UserLimitMVC.Common;
 using Newtonsoft.Json;
+using LYZJ.UserLimitMVC.Common.Select;
 
 namespace UserLimitMVC.Controllers
 {
@@ -28,23 +29,45 @@ namespace UserLimitMVC.Controllers
 
         public ActionResult GetAllUsers()
         {
-
-            //Json格式的要求{total:22,rows:{}}
-
             //实现对用户分页的查询，rows：一共多少条，page：请求的当前第几页
-
             int pageIndex = Request["page"] == null ? 1 : int.Parse(Request["page"]);
-
             int pageSize = Request["rows"] == null ? 1 : int.Parse(Request["rows"]);
+
+            //得到多条件查询的参数
+            #region 多条件查询的参数
+            string RealName = Request["RealName"];
+            string Telephone = Request["Telephone"];
+            string EMail = Request["EMail"];
+            int? Enabled = Request["Enabled"] == null ? -1 : int.Parse(Request["Enabled"]);
+            string AuditStatus = Request["AuditStatus"];
+            int? DeletionStateCode = Request["DeletionStateCode"] == null ? 0 : int.Parse(Request["DeletionStateCode"]);
+            
+            #endregion
 
             int total = 0;
 
+            //封装一个业务逻辑层的方法，来处理分页过滤事件
+            var userInfoQuery = new UserInfoQuery()
+            {
+                PageSize = pageSize,
+                PageIndex = pageIndex,
+                RealName = RealName,
+                Telephone = Telephone,
+                EMail = EMail,
+                Enabled = Enabled,
+                AuditStatus = AuditStatus,
+                Total = 0,
+                DeletionStateCod = DeletionStateCode
+            };
+
             //调用分页的方法，传递参数,拿到分页之后的数据
-            var data = _userInfoService.LoadPageEntities(pageIndex, pageSize, out total, u => true, true, u => u.ID).Select(u => new { ID = u.ID, UserName = u.UserName, RealName = u.RealName, Email = u.Email, Gender = u.Gender, Mobile = u.Mobile, DeletionState = u.DeletionStateCode == 1 ? "已删除" : "正常" });
+            //var data = _userInfoService.LoadPageEntities(pageIndex, pageSize, out total, u => true, true, u => u.ID).Select(u => new { ID = u.ID, UserName = u.UserName, RealName = u.RealName, Email = u.Email, Gender = u.Gender, Mobile = u.Mobile, QICQ = u.QICQ, CreateBy = u.CreateBy, ModifiedBy=u.ModifiedBy, DeletionState = u.DeletionStateCode == 1 ? "已删除" : "正常" });
+            //调用多条件查询的分页方法，传递参数,拿到分页之后的数据
+            var data = _userInfoService.LoadSearchData(userInfoQuery).Select(u => new { ID = u.ID, UserName = u.UserName, RealName = u.RealName, Email = u.Email, Gender = u.Gender, Mobile = u.Mobile, QICQ = u.QICQ, CreateBy = u.CreateBy, ModifiedBy = u.ModifiedBy, DeletionState = u.DeletionStateCode == 1 ? "已删除" : "正常" });
 
             //构造成Json的格式传递
 
-            var result = new { total = total, rows = data };
+            var result = new { total = userInfoQuery.Total, rows = data };
 
             return Json(result, JsonRequestBehavior.AllowGet);
 

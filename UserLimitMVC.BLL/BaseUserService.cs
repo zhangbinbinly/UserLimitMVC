@@ -7,6 +7,7 @@ using UserLimitMVC.Model;
 using UserLimitMVC.DAL;
 using UserLimitMVC.IBLL;
 using UserLimitMVC.Common;
+using LYZJ.UserLimitMVC.Common.Select;
 
 namespace UserLimitMVC.BLL
 {
@@ -120,6 +121,40 @@ namespace UserLimitMVC.BLL
 
             }
 
+        }
+
+        /// <summary>
+        /// 实现对多条件查询的判断方法的封装
+        /// </summary>
+        /// <param name="query">引用传递，传递参数的信息</param>
+        /// <returns>返回用户类的IQueryable集合</returns>
+        public IQueryable<BaseUser> LoadSearchData(UserInfoQuery query)
+        {
+            var temp = _DbSession.BaseUserRepository.LoadEntities(u => true);
+            //首先过滤姓名
+            if (!string.IsNullOrEmpty(query.RealName))
+            {
+                temp = temp.Where<BaseUser>(u => u.RealName.Contains(query.RealName));  //like '%mmm%'
+            }
+            if (!string.IsNullOrEmpty(query.Telephone))
+            {
+                temp = temp.Where<BaseUser>(u => u.Telephone.Contains(query.Telephone));
+            }
+            if (!string.IsNullOrEmpty(query.EMail))
+            {
+                temp = temp.Where<BaseUser>(u => u.Email.Contains(query.EMail));
+            }
+            if (query.Enabled != -1)
+            {
+                temp = temp.Where<BaseUser>(u => u.Enabled == query.Enabled);
+            }
+            if (!string.IsNullOrEmpty(query.AuditStatus) && query.AuditStatus != "-1")
+            {
+                temp = temp.Where<BaseUser>(u => u.AuditStatus.Contains(query.AuditStatus));
+            }
+            temp = query.DeletionStateCod == 1 ? temp.Where<BaseUser>(u => u.DeletionStateCode == query.DeletionStateCod) : temp.Where<BaseUser>(u => u.DeletionStateCode == 0);
+            query.Total = temp.Count();
+            return temp.OrderBy(u => u.SortCode).Skip(query.PageSize * (query.PageIndex - 1)).Take(query.PageSize);
         }
 
         /// <summary>

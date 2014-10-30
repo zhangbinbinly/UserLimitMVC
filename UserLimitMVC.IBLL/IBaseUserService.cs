@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using UserLimitMVC.Model;
 using UserLimitMVC.Common;
+using LYZJ.UserLimitMVC.Common.Select;
 
 namespace UserLimitMVC.IBLL
 {
@@ -18,6 +19,8 @@ namespace UserLimitMVC.IBLL
         LoginResult CheckUserNameTest(string UserName);
 
         int DeleteUsers(List<int> deleteIDList);
+
+        IQueryable<BaseUser> LoadSearchData(UserInfoQuery query);
     }
 
 }
